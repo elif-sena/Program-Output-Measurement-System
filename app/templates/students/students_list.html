@@ -1,93 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Students List</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <style>
-    body {
-      background-color: #f8f9fa;
-    }
-    .table-container {
-      max-width: 1000px;
-      margin: 50px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .table-title {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Student List with Filters</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .table-container {
+            max-width: 1100px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #0000001a;
+        }
+
+        .table-title {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="table-container">
-    <h2 class="table-title">Students List</h2>
-    <a href="/students/add" class="btn btn-success mb-3">Add New Student</a>
+    <div class="container">
+        <div class="table-container">
+            <h2 class="table-title">Student List</h2>
 
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Student Number</th>
-          <th>Full Name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="studentsTableBody"></tbody>
-    </table>
-  </div>
-</div>
+            <div class="row filter-group">
+                <div class="col-md-4 mb-2">
+                    <label class="form-label">Search by Name</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Type to search..." oninput="applyFilters()">
+                </div>
 
-<script>
-  function loadStudents() {
-    fetch("/api/students")
-      .then(response => response.json())
-      .then(data => {
-        const tbody = document.getElementById("studentsTableBody");
-        tbody.innerHTML = "";
+                <div class="col-md-4 mb-2">
+                    <label class="form-label">Student Number Range</label>
+                    <div class="d-flex gap-2">
+                        <input type="number" id="minNumber" class="form-control" placeholder="Min">
+                        <input type="number" id="maxNumber" class="form-control" placeholder="Max">
+                    </div>
+                </div>
 
-        data.forEach((student, index) => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${student.student_number}</td>
-            <td>${student.first_name} ${student.last_name}</td>
-            <td>${student.email}</td>
-            <td>${student.phone}</td>
-            <td>
-              <a href="/students/edit?id=${student.id}" class="btn btn-sm btn-primary">Edit</a>
-              <button class="btn btn-sm btn-danger" onclick="deleteStudent(${student.id})">Delete</button>
-            </td>
-          `;
-          tbody.appendChild(row);
-        });
-      });
-  }
+                <div class="col-md-4 mb-2">
+                    <label class="form-label">Filter by First Letter</label>
+                    <select id="firstLetterFilter" class="form-select">
+                        <option value="">All</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="Ç">Ç</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                        <option value="G">G</option>
+                        <option value="H">H</option>
+                        <option value="I">I</option>
+                        <option value="İ">İ</option>
+                        <option value="J">J</option>
+                        <option value="K">K</option>
+                        <option value="L">L</option>
+                        <option value="M">M</option>
+                        <option value="N">N</option>
+                        <option value="O">O</option>
+                        <option value="Ö">Ö</option>
+                        <option value="P">P</option>
+                        <option value="R">R</option>
+                        <option value="S">S</option>
+                        <option value="Ş">Ş</option>
+                        <option value="T">T</option>
+                        <option value="U">U</option>
+                        <option value="Ü">Ü</option>
+                        <option value="V">V</option>
+                        <option value="Y">Y</option>
+                        <option value="Z">Z</option>
+                    </select>
+                </div>
+            </div>
 
-  function deleteStudent(id) {
-    if (confirm("Are you sure you want to delete this student?")) {
-      fetch(`/api/students/${id}`, { method: "DELETE" })
-        .then(response => {
-          if (response.ok) {
-            alert("Student deleted successfully!");
-            loadStudents();
-          } else {
-            alert("Error deleting student.");
-          }
-        });
-    }
-  }
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Student Number</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                    <!-- Veriler JS ile buraya eklenecek -->
+                </tbody>
+            </table>
 
-  loadStudents();
-</script>
+        </div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/students_list.js') }}"></script>
 </body>
+
 </html>
