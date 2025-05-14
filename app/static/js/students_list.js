@@ -23,7 +23,7 @@ function displayStudents(students) {
         const row = document.createElement("tr");
 
         row.innerHTML = `
-            <td>${student.student_number}</td>
+            <td>${parseInt(student.student_number)}</td>
             <td>${student.first_name}</td>
             <td>${student.last_name}</td>
             <td>${student.email}</td>
