@@ -10,3 +10,16 @@ class StudentForm(FlaskForm):
     email = StringField("Email", validators=[Optional(), Email(), Length(max=100)])
     phone = StringField("Phone", validators=[Optional(), Length(max=20)])
     submit = SubmitField("Save")
+    
+class InstructorForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired(), Length(max=100)])
+    title = StringField("Title", validators=[Optional(), Length(max=50)])
+    email = StringField("Email", validators=[Optional(), Email(), Length(max=120)])
+    submit = SubmitField("Save")
+    
+class CourseForm(FlaskForm):
+    code = StringField("Course Code", validators=[DataRequired(), Length(max=20)])
+    name = StringField("Course Name", validators=[DataRequired(), Length(max=100)])
+    credit = IntegerField("Credit", validators=[DataRequired()])
+    instructor_id = SelectField("Instructor", coerce=int)
+    submit = SubmitField("Save")

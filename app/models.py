@@ -34,10 +34,25 @@ class Instructor(db.Model):
     __tablename__ = 'instructors'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    title = db.Column(db.String(50))
-    email = db.Column(db.String(120), unique=True)
+    title = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(120), unique=True, nullable=True)
+
+    def __repr__(self):
+        return f"<Instructor {self.name}>"
+
 
 class Course(db.Model):
+    __tablename__ = 'courses'
+    id = db.Column(db.Integer, primary_key=True)
+    code = db.Column(db.String(20), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    credit = db.Column(db.Integer, nullable=False)
+    instructor_id = db.Column(db.Integer, db.ForeignKey('instructors.id'), nullable=False)
+    instructor = db.relationship('Instructor', backref=db.backref('courses', lazy=True))
+
+    def __repr__(self):
+        return f"<Course {self.code} - {self.name}>"
+
     __tablename__ = 'courses'
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(20), nullable=False)

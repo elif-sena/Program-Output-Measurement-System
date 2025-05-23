@@ -16,5 +16,7 @@ def create_app():
 
     from app.routes import students_bp
     app.register_blueprint(students_bp)
+    from app.routes import courses_bp
+    app.register_blueprint(courses_bp)
 
     return app 
