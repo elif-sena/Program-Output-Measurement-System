@@ -14,10 +14,10 @@ function loadStudents() {
         });
 }
 
-// Verilen öğrenci verisini tabloya yazan fonksiyon
+
 function displayStudents(students) {
     const tableBody = document.getElementById("studentTableBody");
-    tableBody.innerHTML = ""; // Önce tabloyu temizle
+    tableBody.innerHTML = ""; 
 
     students.forEach(student => {
         const row = document.createElement("tr");
@@ -29,6 +29,7 @@ function displayStudents(students) {
             <td>${student.email}</td>
             <td>${student.phone}</td>
             <td>
+                <a href="/students/edit?id=${student.id}" class="btn btn-warning btn-sm">Edit</a>
                 <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">Delete</button>
             </td>
         `;
@@ -36,6 +37,7 @@ function displayStudents(students) {
         tableBody.appendChild(row);
     });
 }
+
 
 // Filtreleme işlemi
 function applyFilters() {
