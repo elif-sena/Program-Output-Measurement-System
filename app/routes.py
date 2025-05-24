@@ -9,7 +9,7 @@ courses_bp = Blueprint('courses', __name__, url_prefix='/courses')
 
 @students_bp.route("/students", strict_slashes=False)
 def student_list_page():
-    return render_template("students/students_list.html")
+    return render_template("students/student_list.html")
 
 @students_bp.route("/students/add", strict_slashes=False)
 def add_student_page():
