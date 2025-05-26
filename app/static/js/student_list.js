@@ -14,7 +14,6 @@ function loadStudents() {
         });
 }
 
-
 function displayStudents(students) {
     const tableBody = document.getElementById("studentTableBody");
     tableBody.innerHTML = ""; 
@@ -38,8 +37,7 @@ function displayStudents(students) {
     });
 }
 
-
-// Filtreleme işlemi
+// Filtreleme işlemi YEDEK
 /*function applyFilters() {
     const numberMin = parseInt(document.getElementById("numberMin").value) || 0;
     const numberMax = parseInt(document.getElementById("numberMax").value) || Infinity;
@@ -87,13 +85,13 @@ function applyFilters() {
 
                 let visible = true;
 
-                // ✅ Numara aralığı filtresi
+                // Numara aralığı filtresi
                 if (isNaN(num) || num < numberMin || num > numberMax) visible = false;
 
-                // ✅ Baş harf filtresi (sadece isimde)
+                // Baş harf filtresi (sadece isimde)
                 if (firstLetter && !firstName.startsWith(firstLetter)) visible = false;
 
-                // ✅ Ad, soyad veya birleşik ad-soyad araması
+                // Ad-soyad veya birleşik ad-soyad araması
                 if (
                     searchQuery &&
                     !(
@@ -114,10 +112,6 @@ function applyFilters() {
             console.error("Error filtering students:", error);
         });
 }
-
-
-
-
 
 // Silme işlemi
 function deleteStudent(studentId) {
