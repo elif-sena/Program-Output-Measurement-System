@@ -40,7 +40,7 @@ function displayStudents(students) {
 
 
 // Filtreleme işlemi
-function applyFilters() {
+/*function applyFilters() {
     const numberMin = parseInt(document.getElementById("numberMin").value) || 0;
     const numberMax = parseInt(document.getElementById("numberMax").value) || Infinity;
     const firstLetter = document.getElementById("firstLetterFilter").value;
@@ -68,6 +68,56 @@ function applyFilters() {
             console.error("Error filtering students:", error);
         });
 }
+*/
+
+function applyFilters() {
+    const numberMin = parseInt(document.getElementById("minNumber").value) || 0;
+    const numberMax = parseInt(document.getElementById("maxNumber").value) || Infinity;
+    const firstLetter = document.getElementById("firstLetterFilter").value.toUpperCase();
+    const searchQuery = document.getElementById("searchInput").value.toUpperCase().trim();
+
+    fetch("/api/students")
+        .then(response => response.json())
+        .then(data => {
+            const filteredStudents = data.filter(student => {
+                const num = parseInt(student.student_number);
+                const firstName = student.first_name.toUpperCase();
+                const lastName = student.last_name.toUpperCase();
+                const fullName = `${firstName} ${lastName}`;
+
+                let visible = true;
+
+                // ✅ Numara aralığı filtresi
+                if (isNaN(num) || num < numberMin || num > numberMax) visible = false;
+
+                // ✅ Baş harf filtresi (sadece isimde)
+                if (firstLetter && !firstName.startsWith(firstLetter)) visible = false;
+
+                // ✅ Ad, soyad veya birleşik ad-soyad araması
+                if (
+                    searchQuery &&
+                    !(
+                        firstName.includes(searchQuery) ||
+                        lastName.includes(searchQuery) ||
+                        fullName.includes(searchQuery)
+                    )
+                ) {
+                    visible = false;
+                }
+
+                return visible;
+            });
+
+            displayStudents(filteredStudents);
+        })
+        .catch(error => {
+            console.error("Error filtering students:", error);
+        });
+}
+
+
+
+
 
 // Silme işlemi
 function deleteStudent(studentId) {
