@@ -38,21 +38,23 @@
 
             <div class="row filter-group">
                 <div class="col-md-4 mb-2">
-                    <label class="form-label">Search by Name</label>
-                    <input type="text" id="searchInput" class="form-control" placeholder="Type to search..." oninput="applyFilters()">
+                    <label class="form-label">Search by Name </label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by name or surname..." oninput="applyFilters()">
                 </div>
 
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Student Number Range</label>
                     <div class="d-flex gap-2">
-                        <input type="number" id="minNumber" class="form-control" placeholder="Min">
-                        <input type="number" id="maxNumber" class="form-control" placeholder="Max">
+                        <input type="number" id="minNumber" class="form-control" placeholder="Min" oninput="applyFilters()">
+                        <input type="number" id="maxNumber" class="form-control" placeholder="Max" oninput="applyFilters()">
                     </div>
                 </div>
 
+
                 <div class="col-md-4 mb-2">
                     <label class="form-label">Filter by First Letter</label>
-                    <select id="firstLetterFilter" class="form-select">
+                    <select id="firstLetterFilter" class="form-select"
+                    onchange="applyFilters()">
                         <option value="">All</option>
                         <option value="A">A</option>
                         <option value="B">B</option>
