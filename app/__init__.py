@@ -18,5 +18,11 @@ def create_app():
     app.register_blueprint(students_bp)
     from app.routes import courses_bp
     app.register_blueprint(courses_bp)
+    from app.routes import instructors_bp
+    app.register_blueprint(instructors_bp)
+    from app.routes import auth_bp
+    app.register_blueprint(auth_bp)
+    from app.routes import grades_bp
+    app.register_blueprint(grades_bp)
 
     return app 

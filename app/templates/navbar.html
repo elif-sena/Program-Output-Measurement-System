@@ -1,0 +1,16 @@
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('auth.dashboard_page') }}">
+            <img src="{{ url_for('static', filename='uploads/logo.png') }}" alt="Logo">
+        </a>
+        <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('students.list_students') }}">Students</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('courses.list_courses') }}">Courses</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('instructors.list_instructors') }}">Instructors</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('grades.list_grades') }}">Grades</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
