@@ -10,6 +10,7 @@ with app.app_context():
         Instructor(name="Emily Johnson", title="Lecturer", email="emily.johnson@example.com"),
         Instructor(name="Michael Brown", title="Senior Lecturer", email="michael.brown@example.com"),
         Instructor(name="Laura Wilson", title="Assistant Professor", email="laura.wilson@example.com"),
+        Instructor(name="Cemal Köse", title="Professor", email="cemalkose@example.com"),
     ]
 
     db.session.bulk_save_objects(instructors)
