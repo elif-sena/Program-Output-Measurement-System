@@ -210,7 +210,7 @@ def delete_instructor(id):
 def course_list_page():
     courses = Course.query.all()
     instructors = Instructor.query.all()
-    return render_template("courses/courses_list.html", courses=courses, instructors=instructors)
+    return render_template("courses/course_list.html", courses=courses, instructors=instructors)
 
 @students_bp.route("/courses/add", strict_slashes=False)
 def course_add_page():
