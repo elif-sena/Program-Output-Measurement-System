@@ -37,36 +37,6 @@ function displayStudents(students) {
     });
 }
 
-// Filtreleme işlemi YEDEK
-/*function applyFilters() {
-    const numberMin = parseInt(document.getElementById("numberMin").value) || 0;
-    const numberMax = parseInt(document.getElementById("numberMax").value) || Infinity;
-    const firstLetter = document.getElementById("firstLetterFilter").value;
-    const searchQuery = document.getElementById("searchInput").value.toUpperCase();
-
-    fetch("/api/students")
-        .then(response => response.json())
-        .then(data => {
-            const filteredStudents = data.filter(student => {
-                const num = parseInt(student.student_number);
-                const firstName = student.first_name.toUpperCase();
-
-                let visible = true;
-
-                if (num < numberMin || num > numberMax) visible = false;
-                if (firstLetter && !firstName.startsWith(firstLetter)) visible = false;
-                if (searchQuery && !firstName.includes(searchQuery)) visible = false;
-
-                return visible;
-            });
-
-            displayStudents(filteredStudents);
-        })
-        .catch(error => {
-            console.error("Error filtering students:", error);
-        });
-}
-*/
 
 function applyFilters() {
     const numberMin = parseInt(document.getElementById("minNumber").value) || 0;

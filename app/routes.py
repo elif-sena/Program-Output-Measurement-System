@@ -152,36 +152,48 @@ def get_instructor(id):
         "email": instructor.email
     })
 
+
 # POST: Add instructor
 @students_bp.route("/api/instructors", methods=["POST"], strict_slashes=False)
 def add_instructor():
     data = request.get_json()
+
+    if not data or not all(k in data for k in ("name", "title", "email")):
+        return jsonify({"error": "Missing required fields"}), 400
+
     try:
+        # (isteğe bağlı duplicate kontrol)
+        existing = Instructor.query.filter_by(email=data["email"]).first()
+        if existing:
+            return jsonify({"error": "Email already exists"}), 409
+
         instructor = Instructor(
-            name=data.get("name"),
-            title=data.get("title"),
-            email=data.get("email")
+            name=data["name"],
+            title=data["title"],
+            email=data["email"]
         )
+
         db.session.add(instructor)
         db.session.commit()
         return jsonify({"message": "Instructor added successfully!"}), 201
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+
 # PUT: Update instructor
 @students_bp.route("/api/instructors/<int:id>", methods=["PUT"], strict_slashes=False)
 def update_instructor(id):
+    data = request.get_json()
     instructor = Instructor.query.get(id)
     if not instructor:
         return jsonify({"error": "Instructor not found"}), 404
 
-    data = request.get_json()
     try:
         instructor.name = data.get("name")
         instructor.title = data.get("title")
         instructor.email = data.get("email")
-
         db.session.commit()
         return jsonify({"message": "Instructor updated successfully!"})
     except Exception as e:
