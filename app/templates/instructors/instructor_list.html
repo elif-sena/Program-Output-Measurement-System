@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>BES University | Instructor List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .table-container {
+            max-width: 1100px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px #0000001a;
+        }
+
+        .table-title {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #343a40;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="table-container">
+            <h2 class="table-title">Instructor List</h2>
+
+            <div class="row filter-group">
+                <div class="col-md-4 mb-2">
+                    <label class="form-label">Search by Name</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by name..."
+                        oninput="applyFilters()">
+                </div>
+
+                <div class="col-md-4 mb-2">
+                    <label class="form-label">Instructor ID Range</label>
+                    <div class="d-flex gap-2">
+                        <input type="text" id="minId" class="form-control" placeholder="Min ID"
+                            oninput="applyFilters()">
+                        <input type="text" id="maxId" class="form-control" placeholder="Max ID"
+                            oninput="applyFilters()">
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-2">
+                    <label class="form-label">Filter by Title</label>
+                    <select id="titleFilter" class="form-select" onchange="applyFilters()">
+                        <option value="">All Titles</option>
+                        <option value="Professor">Professor</option>
+                        <option value="Associate Professor">Associate Professor</option>
+                        <option value="Assistant Professor">Assistant Professor</option>
+                        <option value="Lecturer">Lecturer</option>
+                        <option value="Senior Lecturer">Senior Lecturer</option>
+                        <option value="Research Assistant">Research Assistant</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Instructor ID</th>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="instructorTableBody">
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <script src=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
