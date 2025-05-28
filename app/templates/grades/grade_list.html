@@ -1,1 +1,55 @@
-{% include 'navbar.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Grades List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container mt-5">
+        <h2>Grades List</h2>
+
+        <a href="/grades/upload" class="btn btn-success mb-3">
+            Bulk Upload Grades
+        </a>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Student Number</th>
+                    <th>Student Name</th>
+                    <th>Course Code</th>
+                    <th>Course Name</th>
+                    <th>Grade</th>
+                    <th>Added On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grade in grades %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ grade.student.student_number }}</td>
+                    <td>{{ grade.student.first_name }} {{ grade.student.last_name }}</td>
+                    <td>{{ grade.course.code }}</td>
+                    <td>{{ grade.course.name }}</td>
+                    <td>{{ "%.2f"|format(grade.grade) }}</td>
+                    <td>{{ grade.timestamp.strftime("%Y-%m-%d %H:%M") }}</td>
+                    <td>
+                        <form action="{{ url_for('grades.delete_grade', id=grade.id) }}" method="POST" onsubmit="return confirm('Are you sure to delete this grade?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center">No grades found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

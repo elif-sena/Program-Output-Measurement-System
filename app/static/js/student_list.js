@@ -30,6 +30,7 @@ function displayStudents(students) {
             <td>
                 <a href="/students/edit?id=${student.id}" class="btn btn-warning btn-sm">Edit</a>
                 <button class="btn btn-danger btn-sm" onclick="deleteStudent(${student.id})">Delete</button>
+                <button class="btn btn-primary btn-sm" onclick="location.href='/students/charts?student_id=${student.id}'">Charts</button>
             </td>
         `;
 

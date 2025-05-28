@@ -33,6 +33,7 @@ function renderTable(instructors) {
             <td>
                 <a href="/instructors/edit/${instructor.id}" class="btn btn-sm btn-primary">Edit</a>
                 <button class="btn btn-danger btn-sm" onclick="deleteInstructor(${instructor.id})">Delete</button>
+                <button class="btn btn-primary btn-sm" onclick="location.href='/students/charts?student_id={{ ${student.id }}'">Charts</button>
             </td>
         </tr>
     `;

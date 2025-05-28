@@ -80,3 +80,6 @@ class Grade(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
     grade = db.Column(db.Float, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    student = db.relationship('Student', backref=db.backref('grades', lazy=True))
+    course = db.relationship('Course', backref=db.backref('grades', lazy=True))

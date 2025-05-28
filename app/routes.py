@@ -1,12 +1,18 @@
 from flask import render_template, request, jsonify, Blueprint, session
+from sqlalchemy import func
 from app import db
-from app.models import Course, Grade, Instructor, Student
+from app.models import Course, CoursePOMap, Grade, Instructor, ProgramOutcome, Student
+import pandas as pd
+from flask import request, redirect, url_for, flash, render_template
+from app.po_calculations import calculate_overall_po_success
+
 
 students_bp = Blueprint('students', __name__)  
 courses_bp = Blueprint('courses', __name__)
 auth_bp = Blueprint('auth', __name__)
 grades_bp = Blueprint('grades', __name__)
 instructors_bp = Blueprint('instructors', __name__)
+
 
 # === HTML Pages For Login And Dashboard===
 
@@ -56,8 +62,176 @@ def add_student_page():
 def edit_student_page():
     return render_template("students/student_edit.html")
 
-# === API Routes For Students===
+from flask import render_template, request
+from sqlalchemy import func
 
+@students_bp.route('/students/charts')
+def student_charts():
+    student_id = request.args.get('student_id', type=int)
+    if not student_id:
+        return "Student ID is required", 400
+
+    # Average grade per course
+    course_averages = (
+        db.session.query(
+            Course.code.label('course_code'),
+            func.avg(Grade.grade).label('avg_grade')
+        )
+        .join(Grade, Grade.course_id == Course.id)
+        .filter(Grade.student_id == student_id)
+        .group_by(Course.id)
+        .all()
+    )
+
+    # Average grade per program outcome
+    # Join CoursePOMap to link courses with program outcomes
+    po_averages = (
+        db.session.query(
+            ProgramOutcome.code.label('po_code'),
+            func.avg(Grade.grade).label('avg_grade')
+        )
+        .join(CoursePOMap, CoursePOMap.po_id == ProgramOutcome.id)
+        .join(Course, Course.id == CoursePOMap.course_id)
+        .join(Grade, (Grade.course_id == Course.id) & (Grade.student_id == student_id))
+        .group_by(ProgramOutcome.id)
+        .all()
+    )
+
+    return render_template('/students/student_charts.html',
+                           course_averages=course_averages,
+                           po_averages=po_averages)
+
+    student_id = request.args.get('student_id', type=int)
+    if not student_id:
+        return "Student ID is required", 400
+
+    student = Student.query.get(student_id)
+    if not student:
+        return "Student not found", 404
+
+    course_averages = (
+        Grade.query
+        .with_entities(Course.code.label('course_code'), func.avg(Grade.grade).label('avg_grade'))
+        .join(Course, Grade.course_id == Course.id)
+        .filter(Grade.student_id == student_id)
+        .group_by(Course.id)
+        .all()
+    )
+
+    po_averages = (
+        db.session.query(
+            ProgramOutcome.code.label('po_code'),
+            func.avg(Grade.grade).label('avg_grade')
+        )
+        .join(CoursePOMap, ProgramOutcome.id == CoursePOMap.po_id)
+        .join(Course, CoursePOMap.course_id == Course.id)
+        .join(Grade, (Grade.course_id == Course.id) & (Grade.student_id == student_id))
+        .group_by(ProgramOutcome.id)
+        .all()
+    )
+
+    # convert to serializable format
+    course_averages = [{'course_code': c.course_code, 'avg_grade': float(c.avg_grade)} for c in course_averages]
+    po_averages = [{'po_code': p.po_code, 'avg_grade': float(p.avg_grade)} for p in po_averages]
+
+    # create serializable student dict
+    student_data = {
+        'first_name': student.first_name,
+        'last_name': student.last_name,
+        'student_number': student.student_number,
+        'email': student.email,
+        'phone': student.phone,
+    }
+
+    return render_template('students/student_charts.html',
+                           student=student_data,
+                           course_averages=course_averages,
+                           po_averages=po_averages)
+
+    student_id = request.args.get('student_id', type=int)
+    if not student_id:
+        return "Student ID is required", 400
+
+    # Fetch student info
+    student = Student.query.get(student_id)
+    if not student:
+        return "Student not found", 404
+
+    # Average grade per course
+    course_averages = (
+        Grade.query
+        .with_entities(Course.code.label('course_code'), func.avg(Grade.grade).label('avg_grade'))
+        .join(Course, Grade.course_id == Course.id)
+        .filter(Grade.student_id == student_id)
+        .group_by(Course.id)
+        .all()
+    )
+
+    # Average grade per program outcome
+    # Join Grade -> Course -> CoursePOMap -> ProgramOutcome
+    po_averages = (
+        db.session.query(
+            ProgramOutcome.code.label('po_code'),
+            func.avg(Grade.grade).label('avg_grade')
+        )
+        .join(CoursePOMap, ProgramOutcome.id == CoursePOMap.po_id)
+        .join(Course, CoursePOMap.course_id == Course.id)
+        .join(Grade, (Grade.course_id == Course.id) & (Grade.student_id == student_id))
+        .group_by(ProgramOutcome.id)
+        .all()
+    )
+
+    # Convert to list of dict for JSON serialization
+    course_averages = [{'course_code': c.course_code, 'avg_grade': float(c.avg_grade)} for c in course_averages]
+    po_averages = [{'po_code': p.po_code, 'avg_grade': float(p.avg_grade)} for p in po_averages]
+
+    return render_template('students/student_charts.html',
+                           student=student,
+                           course_averages=course_averages,
+                           po_averages=po_averages)
+
+
+    student_id = request.args.get('student_id', type=int)
+    if not student_id:
+        return "Student ID is required", 400
+
+    # Get student info
+    student = Student.query.get(student_id)
+    if not student:
+        return "Student not found", 404
+
+    # Average grade per course
+    course_averages = (
+        db.session.query(
+            Course.code.label('course_code'),
+            func.avg(Grade.grade).label('avg_grade')
+        )
+        .join(Grade, Grade.course_id == Course.id)
+        .filter(Grade.student_id == student_id)
+        .group_by(Course.id)
+        .all()
+    )
+
+    # Average grade per program outcome
+    po_averages = (
+        db.session.query(
+            ProgramOutcome.code.label('po_code'),
+            func.avg(Grade.grade).label('avg_grade')
+        )
+        .join(CoursePOMap, CoursePOMap.po_id == ProgramOutcome.id)
+        .join(Course, Course.id == CoursePOMap.course_id)
+        .join(Grade, (Grade.course_id == Course.id) & (Grade.student_id == student_id))
+        .group_by(ProgramOutcome.id)
+        .all()
+    )
+
+    return render_template('/students/student_charts.html',
+                           student=student,
+                           course_averages=course_averages,
+                           po_averages=po_averages)
+
+
+# === API Routes For Students===
 # Get all students
 @students_bp.route("/api/students", methods=["GET"], strict_slashes=False)
 def list_students():
@@ -354,18 +528,15 @@ def grade_list_page():
     grades = Grade.query.all()
     return render_template("grades/grade_list.html", grades=grades)
 
-@grades_bp.route("/grades/add", strict_slashes=False)
+@grades_bp.route("/grades/upload", strict_slashes=False)
 def add_grade_page():
     students = Student.query.all()
     courses = Course.query.all()
-    return render_template("grades/grade_add.html", students=students, courses=courses)
+    return render_template("grades/upload_grades.html", students=students, courses=courses)
 
-@grades_bp.route("/grades/edit/<int:id>", strict_slashes=False)
-def edit_grade_page(id):
-    grade = Grade.query.get_or_404(id)
-    students = Student.query.all()
-    courses = Course.query.all()
-    return render_template("grades/grade_edit.html", grade=grade, students=students, courses=courses)
+@grades_bp.route('/grades/report')
+def report_dashboard():
+    return render_template('grades/grade_report.html')
 
 # === API Routes For Grades ===
 
@@ -396,18 +567,111 @@ def get_grade(id):
         "grade": grade.grade
     })
 
-@grades_bp.route("/api/grades", methods=["POST"], strict_slashes=False)
-def add_grade():
-    data = request.get_json()
+@grades_bp.route("/grades/upload", methods=["GET", "POST"])
+def upload_grades_bulk():
+    if request.method == "POST":
+        file = request.files.get("file")
+        if not file:
+            return render_template("grades/upload_grades.html", error="No file uploaded")
+        
+        try:
+            # Read file depending on extension
+            if file.filename.endswith('.csv'):
+                df = pd.read_csv(file)
+            elif file.filename.endswith(('.xls', '.xlsx')):
+                df = pd.read_excel(file)
+            else:
+                return render_template("grades/upload_grades.html", error="Invalid file format")
+
+            # Check required columns
+            required_cols = {"student_number", "course_code", "grade"}
+            if not required_cols.issubset(set(df.columns.str.lower())):
+                return render_template("grades/upload_grades.html", error="File must contain columns: student_number, course_code, grade")
+
+            # Normalize columns to lowercase for safety
+            df.columns = df.columns.str.lower()
+
+            added_count = 0
+            errors = []
+            for _, row in df.iterrows():
+                student = Student.query.filter_by(student_number=row['student_number']).first()
+                course = Course.query.filter_by(code=row['course_code']).first()
+                grade_val = row['grade']
+
+                if not student:
+                    errors.append(f"Student not found: {row['student_number']}")
+                    continue
+                if not course:
+                    errors.append(f"Course not found: {row['course_code']}")
+                    continue
+
+                # Check if grade already exists for this student and course
+                existing_grade = Grade.query.filter_by(student_id=student.id, course_id=course.id).first()
+                if existing_grade:
+                    # If you want to skip or update existing, decide here; skipping for now
+                    errors.append(f"Grade already exists for {student.student_number} in {course.code}")
+                    continue
+                
+                new_grade = Grade(student_id=student.id, course_id=course.id, grade=grade_val)
+                db.session.add(new_grade)
+                added_count += 1
+            
+            db.session.commit()
+            
+            message = f"Successfully added {added_count} grades."
+            if errors:
+                message += " Some entries skipped: " + "; ".join(errors)
+            return render_template("grades/upload_grades.html", message=message)
+
+        except Exception as e:
+            db.session.rollback()
+            return render_template("grades/upload_grades.html", error=f"Error processing file: {str(e)}")
+    
+    # GET request shows the upload form
+    return render_template("grades/upload_grades.html")
+
+@grades_bp.route("/grades/delete/<int:id>", methods=["POST"])
+def delete_grade(id):
+    grade = Grade.query.get_or_404(id)
     try:
-        grade = Grade(
-            student_id=data.get("student_id"),
-            course_id=data.get("course_id"),
-            grade=data.get("grade")
-        )
-        db.session.add(grade)
+        db.session.delete(grade)
         db.session.commit()
-        return jsonify({"message": "Grade added successfully!"}), 201
+        flash("Grade deleted successfully.", "success")
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500 #Editing grades are not included
+        flash(f"Error deleting grade: {str(e)}", "danger")
+    return redirect(url_for('grades_bp.grade_list_page'))
+
+@grades_bp.route('/grades/api/average_grades_by_po')
+def average_grades_by_po():
+    po_list = ProgramOutcome.query.all()
+
+    results = []
+    for po in po_list:
+        po_stats = calculate_overall_po_success(po.id)
+        if po_stats:
+            results.append(po_stats)
+
+   
+    data = {
+        "labels": [r["po_code"] for r in results],
+        "averages": [r["average_grade"] for r in results],
+       
+        "success_rates": [r["success_rate"] for r in results]
+    }
+    return jsonify(data)
+
+
+@grades_bp.route('/grades/api/average_grades_all_students_per_course')
+def average_grades_all_students_per_course():
+ 
+    results = db.session.query(
+        Course.code,
+        func.avg(Grade.grade).label('avg_grade')
+    ).join(Grade.course).group_by(Course.id).all()
+
+    data = {
+        "labels": [r[0] for r in results],
+        "averages": [round(r[1], 2) for r in results]
+    }
+    return jsonify(data)
