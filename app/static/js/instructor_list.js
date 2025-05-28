@@ -31,7 +31,7 @@ function renderTable(instructors) {
             <td>${instructor.title}</td>
             <td>${instructor.email}</td>
             <td>
-                <a href="/instructors/edit/${instructor.id}" class="btn btn-sm btn-primary">Edit</a>
+                <a href="/instructors/edit/${instructor.id}" class="btn btn-warning btn-sm">Edit</a>
                 <button class="btn btn-danger btn-sm" onclick="deleteInstructor(${instructor.id})">Delete</button>
             </td>
         </tr>

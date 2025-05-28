@@ -7,6 +7,7 @@ from flask import request, redirect, url_for, flash, render_template
 from app.po_calculations import calculate_overall_po_success
 
 
+
 students_bp = Blueprint('students', __name__)  
 courses_bp = Blueprint('courses', __name__)
 auth_bp = Blueprint('auth', __name__)
@@ -16,51 +17,99 @@ instructors_bp = Blueprint('instructors', __name__)
 
 # === HTML Pages For Login And Dashboard===
 
+from flask import request, session, redirect, url_for, flash
+
 @auth_bp.route("/login", methods=["GET"], strict_slashes=False)
 def login_page():
     return render_template("login.html")
 
-@auth_bp.route("/dashboard", methods=["GET"], strict_slashes=False)
+@auth_bp.route("/dashboard", methods=["GET", "POST"], strict_slashes=False)
 def dashboard_page():
+    if request.method == "POST":
+        admin_id = request.form.get("adminId")
+        password = request.form.get("password")
+
+        try:
+            admin_id_int = int(admin_id)
+        except (ValueError, TypeError):
+            flash("Geçersiz ID formatı.")
+            return redirect(url_for("auth.login_page"))
+
+        if admin_id_int == 16 and password == "1234":
+            user = Instructor.query.filter_by(id=admin_id_int).first()
+            if user:
+                session["user_id"] = user.id
+                session["user_name"] = user.name
+                return redirect(url_for("auth.dashboard_page"))
+            else:
+                flash("Kullanıcı bulunamadı.")
+                return redirect(url_for("auth.login_page"))
+        else:
+            flash("Yanlış ID veya şifre!")
+            return redirect(url_for("auth.login_page"))
+
+    # GET isteği için session kontrolü
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+
     total_students = Student.query.count()
     total_instructors = Instructor.query.count()
     total_courses = Course.query.count()
+
     return render_template("dashboard.html", total_students=total_students,
                            total_instructors=total_instructors, total_courses=total_courses)
 
+
+
 # === API Routes For Login And Dashboard ===
+
 
 @auth_bp.route("/api/login", methods=["POST"], strict_slashes=False)
 def login_user():
     data = request.get_json()
-    email = data.get("email")
+    user_id = data.get("id")  # email yerine id alıyoruz
     password = data.get("password")
 
-    user = Instructor.query.filter_by(email=email).first()
-    if user and password == "admin123":  # Güvenli değil, sadece örnek
-        session["user_id"] = user.id
-        session["user_name"] = user.name
-        return jsonify({"message": "Login successful!"})
+    if user_id == 16 and password == "1234":
+        user = Instructor.query.filter_by(id=user_id).first()
+        if user:
+            session["user_id"] = user.id
+            session["user_name"] = user.name
+            return jsonify({"message": "Login successful!"})
     return jsonify({"error": "Invalid credentials"}), 401
+
 
 @auth_bp.route("/logout", strict_slashes=False)
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('auth.login_page'))
+
+
+
     
 
 # === HTML Page Routes  For Students ===
 
 @students_bp.route("/students", strict_slashes=False)
 def student_list_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     return render_template("students/student_list.html")
+
 
 @students_bp.route("/students/add", strict_slashes=False)
 def add_student_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+
     return render_template("students/student_add.html")
 
 @students_bp.route("/students/edit", strict_slashes=False)
 def edit_student_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     return render_template("students/student_edit.html")
 
 from flask import render_template, request
@@ -98,9 +147,7 @@ def student_charts():
         .all()
     )
 
-    return render_template('/students/student_charts.html',
-                           course_averages=course_averages,
-                           po_averages=po_averages)
+    
 
     student_id = request.args.get('student_id', type=int)
     if not student_id:
@@ -144,10 +191,7 @@ def student_charts():
         'phone': student.phone,
     }
 
-    return render_template('students/student_charts.html',
-                           student=student_data,
-                           course_averages=course_averages,
-                           po_averages=po_averages)
+    
 
     student_id = request.args.get('student_id', type=int)
     if not student_id:
@@ -186,10 +230,7 @@ def student_charts():
     course_averages = [{'course_code': c.course_code, 'avg_grade': float(c.avg_grade)} for c in course_averages]
     po_averages = [{'po_code': p.po_code, 'avg_grade': float(p.avg_grade)} for p in po_averages]
 
-    return render_template('students/student_charts.html',
-                           student=student,
-                           course_averages=course_averages,
-                           po_averages=po_averages)
+    
 
 
     student_id = request.args.get('student_id', type=int)
@@ -323,15 +364,24 @@ def delete_student(id):
 
 @instructors_bp.route("/instructors", strict_slashes=False)
 def instructor_list_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     instructors = Instructor.query.all()
     return render_template("instructors/instructor_list.html", instructors=instructors)
 
 @instructors_bp.route("/instructors/add", strict_slashes=False)
 def instructor_add_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     return render_template("instructors/instructor_add.html")
 
 @instructors_bp.route("/instructors/edit/<int:id>", strict_slashes=False)
 def instructor_edit_page(id):
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     instructor = Instructor.query.get_or_404(id)
     return render_template("instructors/instructor_edit.html", instructor=instructor)
 
@@ -420,17 +470,26 @@ def delete_instructor(id):
 
 @courses_bp.route("/courses", strict_slashes=False)
 def cource_list_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     courses = Course.query.all()
     instructors = Instructor.query.all()
     return render_template("courses/course_list.html", courses=courses, instructors=instructors)
 
 @courses_bp.route("/courses/add", strict_slashes=False)
 def course_add_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     instructors = Instructor.query.all()
     return render_template("courses/course_add.html", instructors=instructors)
 
 @courses_bp.route("/courses/edit/<int:id>", strict_slashes=False)
 def course_edit_page(id):
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     course = Course.query.get_or_404(id)
     instructors = Instructor.query.all()
     return render_template("courses/course_edit.html", course=course, instructors=instructors)
@@ -526,17 +585,26 @@ def delete_course(id):
 
 @grades_bp.route("/grades", strict_slashes=False)
 def grade_list_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     grades = Grade.query.all()
     return render_template("grades/grade_list.html", grades=grades)
 
 @grades_bp.route("/grades/upload", strict_slashes=False)
 def add_grade_page():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     students = Student.query.all()
     courses = Course.query.all()
     return render_template("grades/upload_grades.html", students=students, courses=courses)
 
 @grades_bp.route('/grades/report')
 def report_dashboard():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login_page"))
+    
     return render_template('grades/grade_report.html')
 
 # === API Routes For Grades ===
@@ -641,7 +709,8 @@ def delete_grade(id):
     except Exception as e:
         db.session.rollback()
         flash(f"Error deleting grade: {str(e)}", "danger")
-    return redirect(url_for('grades_bp.grade_list_page'))
+    return redirect(url_for('grades.grade_list_page'))
+
 
 @grades_bp.route('/grades/api/average_grades_by_po')
 def average_grades_by_po():
