@@ -20,7 +20,7 @@ instructors_bp = Blueprint('instructors', __name__)
 def login_page():
     return render_template("login.html")
 
-@auth_bp.route("/dashboard", methods=["GET"], strict_slashes=False)
+@auth_bp.route("/dashboard", methods=["GET", "POST"], strict_slashes=False)
 def dashboard_page():
     total_students = Student.query.count()
     total_instructors = Instructor.query.count()
