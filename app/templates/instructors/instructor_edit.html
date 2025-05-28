@@ -35,6 +35,7 @@
 
 <body>
     {% include 'navbar.html' %}
+
     <div class="container">
         <div class="form-container">
             <h2 class="form-title">Edit Instructor</h2>
@@ -42,51 +43,39 @@
 
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        class="form-control"
-                        value="{{ instructor.name }}"
-                        required
-                    >
+                    <input type="text" id="name" name="name" class="form-control" value="{{ instructor.name }}"
+                        required>
                 </div>
 
                 <div class="mb-3">
                     <label for="instructorId" class="form-label">Instructor ID</label>
-                    <input
-                        type="text"
-                        id="instructorId"
-                        name="instructor_id"
-                        class="form-control"
-                        value="{{ instructor.id }}"
-                        readonly
-                    >
+                    <input type="text" id="instructorId" name="instructor_id" class="form-control"
+                        value="{{ instructor.id }}" readonly>
                 </div>
 
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
                     <select id="title" name="title" class="form-select" required>
                         <option value="">Select Title</option>
-                        <option value="Professor" {% if instructor.title == "Professor" %}selected{% endif %}>Professor</option>
-                        <option value="Associate Professor" {% if instructor.title == "Associate Professor" %}selected{% endif %}>Associate Professor</option>
-                        <option value="Assistant Professor" {% if instructor.title == "Assistant Professor" %}selected{% endif %}>Assistant Professor</option>
-                        <option value="Lecturer" {% if instructor.title == "Lecturer" %}selected{% endif %}>Lecturer</option>
-                        <option value="Senior Lecturer" {% if instructor.title == "Senior Lecturer" %}selected{% endif %}>Senior Lecturer</option>
-                        <option value="Research Assistant" {% if instructor.title == "Research Assistant" %}selected{% endif %}>Research Assistant</option>
+                        <option value="Professor" {% if instructor.title=="Professor" %}selected{% endif %}>Professor
+                        </option>
+                        <option value="Associate Professor" {% if instructor.title=="Associate Professor" %}selected{%
+                            endif %}>Associate Professor</option>
+                        <option value="Assistant Professor" {% if instructor.title=="Assistant Professor" %}selected{%
+                            endif %}>Assistant Professor</option>
+                        <option value="Lecturer" {% if instructor.title=="Lecturer" %}selected{% endif %}>Lecturer
+                        </option>
+                        <option value="Senior Lecturer" {% if instructor.title=="Senior Lecturer" %}selected{% endif %}>
+                            Senior Lecturer</option>
+                        <option value="Research Assistant" {% if instructor.title=="Research Assistant" %}selected{%
+                            endif %}>Research Assistant</option>
                     </select>
                 </div>
 
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        class="form-control"
-                        value="{{ instructor.email }}"
-                        required
-                    >
+                    <input type="email" id="email" name="email" class="form-control" value="{{ instructor.email }}"
+                        required>
                 </div>
 
                 <button type="submit" class="btn btn-success w-100">Update Instructor</button>
