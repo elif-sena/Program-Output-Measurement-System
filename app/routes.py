@@ -18,7 +18,7 @@ instructors_bp = Blueprint('instructors', __name__)
 
 @auth_bp.route("/login", methods=["GET"], strict_slashes=False)
 def login_page():
-    return render_template("auth/login.html")
+    return render_template("login.html")
 
 @auth_bp.route("/dashboard", methods=["GET"], strict_slashes=False)
 def dashboard_page():
@@ -46,7 +46,8 @@ def login_user():
 @auth_bp.route("/logout", strict_slashes=False)
 def logout():
     session.clear()
-    return jsonify({"message": "Logged out successfully!"})
+    return redirect(url_for('login'))
+    
 
 # === HTML Page Routes  For Students ===
 
