@@ -35,7 +35,7 @@ def dashboard_page():
             flash("Geçersiz ID formatı.")
             return redirect(url_for("auth.login_page"))
 
-        if admin_id_int == 16 and password == "1234":
+        if admin_id_int == 1 and password == "1234":
             user = Instructor.query.filter_by(id=admin_id_int).first()
             if user:
                 session["user_id"] = user.id
@@ -70,7 +70,7 @@ def login_user():
     user_id = data.get("id")  # email yerine id alıyoruz
     password = data.get("password")
 
-    if user_id == 16 and password == "1234":
+    if user_id == 1 and password == "1234":
         user = Instructor.query.filter_by(id=user_id).first()
         if user:
             session["user_id"] = user.id
