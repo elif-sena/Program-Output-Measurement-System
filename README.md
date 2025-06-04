@@ -1,22 +1,85 @@
-# BES Üniversitesi - Bilgi Yönetim Sistemi
+# 📚 BES Üniversitesi - Bilgi Yönetim Sistemi
 
-Bu proje, Bilgisayar Mühendisliği Web Programlama dersi kapsamında **Program Çıktılarını (PÇ)** gözlemlemek amacıyla geliştirilmiştir.
+> **Not:** Bu proje hayali bir üniversite olan *BES Üniversitesi* için geliştirilmiştir. Gerçek bir kurum değildir.
 
-## Projede Görev Alanlar
+---
 
-- **414685** - Elif Sena Harman  
-- **425445** - Şerife Şevval Mert  
-- **425432** - İrem Buse Özköse  
+## 📌 Proje Açıklaması
 
-## Giriş Bilgileri
+Bu proje, Bilgisayar Mühendisliği Web Programlama dersi kapsamında **Program Çıktılarını (PÇ)** gözlemlemek amacıyla hazırlanmıştır.
 
-Web sitesine giriş yapabilmek için aşağıdaki bilgileri kullanabilirsiniz:
+Bu sistem sayesinde kullanıcılar;
 
-- **ID:** `16`  
-- **Şifre:** `1234`  
+- 🎓 Öğrenci yönetimi
+- 📚 Ders yönetimi
+- 👨‍🏫 Öğretim elemanı yönetimi
+- 📈 Program çıktısı gözlemleme
 
-## Notlar
+gibi işlemleri web arayüzü üzerinden gerçekleştirebilir.
 
-- Projeyi **sanal ortam** (virtual environment - `venv`) oluşturarak çalıştırdık ve test ettik.
-- Ancak, `venv` klasörü boyutundan dolayı ödevi gönderirken klasöre **dahil edilmemiştir**.
-- Ek olarak, **CSV formatındaki dosyayı** yükleyerek sistemin işleyişini deneyebilirsiniz.
+---
+
+## 🔐 Giriş Bilgileri
+
+Aşağıdaki bilgilerle sisteme giriş yapabilirsiniz:
+
+- **ID:** `1`  
+- **Şifre:** `1234`
+
+---
+
+## ⚙️ Kullanılan Teknolojiler
+
+### Frontend
+- HTML  
+- CSS  
+- JavaScript  
+- Bootstrap 5
+
+### Backend
+- Python Flask
+
+### Veritabanı
+- SQLAlchemy
+
+---
+
+## 👥 Katkıda Bulunanlar
+
+- Elif Sena Harman  
+- Şerife Şevval Mert  
+- İrem Buse Özköse  
+
+---
+
+## 📝 NOT
+
+- Proje **sanal ortam** (virtual environment - `venv`) kullanılarak geliştirilip test edilmiştir.
+
+---
+
+## 📷 Screenshots
+
+![Signin](app/static/uploads/screenshots/signin.png)
+
+![Dashboard](app/static/uploads/screenshots/dashboard.png)
+
+![Öğrenci Listesi](app/static/uploads/screenshots/studentList.png)
+
+![Öğrenci Ekleme](app/static/uploads/screenshots/addNewStudent.png)
+
+![Öğrenci Düzenleme](app/static/uploads/screenshots/editStudent.png)
+
+![Ders Listesi](app/static/uploads/screenshots/courseList.png)
+
+![Öğretim Elemanı](app/static/uploads/screenshots/instructorList.png)
+
+![Not Listesi](app/static/uploads/screenshots/gradeList.png)
+
+![Not Yükleme(CSV or Excel)](app/static/uploads/screenshots/uploadGrades.png)
+
+![Charts](app/static/uploads/screenshots/charts.png)
+
+![Performance Reports](app/static/uploads/screenshots/performance1.png)
+
+![Performance Reports](app/static/uploads/screenshots/performans2.png)
